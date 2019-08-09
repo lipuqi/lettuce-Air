@@ -151,7 +151,7 @@ public class DeviceServiceImpl implements DeviceService {
 
 		commandData.put("deviceId", huaweiIotProperties.getDeviceId());
 		commandData.put("command", command);
-		commandData.put("expireTime", huaweiIotProperties.getCommandExecuteTime());
+		commandData.put("expireTime", 0);
 		commandData.put("maxRetransmit", 3);
 		commandData.put("callbackUrl", huaweiIotProperties.getCommandCallbackUrl());
 
