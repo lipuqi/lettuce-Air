@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<meta charset="UTF-8">
+<title>监控面板</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet">
+<style>
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.428571429;
+	color: #333333;
+	background-color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>IOT监控面板</h1>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table">
+					<caption>所有设备状态情况</caption>
+					<thead>
+						<tr>
+							<th>名称</th>
+							<th>状态</th>
+							<th>更新时间</th>
+						</tr>
+					</thead>
+					<tbody id="device">
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-12">
+				<table class="table">
+					<caption>命令下发情况</caption>
+					<thead>
+						<tr>
+							<th>命令下发ID</th>
+							<th>命令</th>
+							<th>状态</th>
+							<th>执行时间</th>
+						</tr>
+					</thead>
+					<tbody id="task">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script
+		src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			init()
+			setInterval(init, 5000);
+		});
+
+		function init() {
+			$
+					.ajax({
+						url : "monitor/getDeviceList",
+						dataType : "json",
+						success : function(data) {
+							if (data.code == 200) {
+								var data = data.datas;
+								if (data.length != 0) {
+									var html = "";
+									for (var i = 0; i < data.length; i++) {
+										html += "<tr>";
+										if (data[i].deviceKey == "Bulb") {
+											html += "<td>灯</td>";
+											if (data[i].status == 1) {
+												html += "<td class='text-success'>开启</td>";
+											} else {
+												html += "<td class='text-danger'>关闭</td>";
+											}
+										} else {
+											html += "<td>设备状态</td>"
+											if (data[i].status == 1) {
+												html += "<td class='text-success'>在线</td>";
+											} else {
+												html += "<td class='text-danger'>离线</td>";
+											}
+										}
+
+										html += "<td>"
+												+ crtTimeFtt(data[i].updateTime)
+												+ "</td>";
+										html += "</tr>";
+									}
+									$("#device").html(html);
+								}
+							} else {
+								console.log("请求设备列表失败: " + data.code + "--"
+										+ data.message)
+							}
+						},
+						fail : function(error) {
+							console.log("网络请求失败：" + error)
+						}
+					});
+			$.ajax({
+				url : "monitor/getTaskList",
+				dataType : "json",
+				success : function(data) {
+					if (data.code == 200) {
+						var data = data.datas;
+						if (data.length != 0) {
+							var html = "";
+							for (var i = 0; i < data.length; i++) {
+								html += "<tr>";
+								html += "<td>" + data[i].commandId + "</td>";
+								if (data[i].method == "ON_OFF") {
+									html += "<td>开/关灯</td>";
+								} else if (data[i].method == "QUERY_STATUS") {
+									html += "<td>查询灯的状态</td>"
+								} else if (data[i].method == "QUIT_PYTHON") {
+									html += "<td>主动下线</td>"
+								}
+
+								switch (data[i].status) {
+								case "PENDING":
+									html += "<td>缓存未下发</td>";
+									break;
+								case "EXPIRED":
+									html += "<td>已经过期</td>";
+									break;
+								case "SUCCESSFUL":
+									html += "<td>执行成功</td>";
+									break;
+								case "FAILED":
+									html += "<td>执行失败</td>";
+									break;
+								case "TIMEOUT":
+									html += "<td>执行超时</td>";
+									break;
+								case "CANCELED":
+									html += "<td>撤销执行</td>";
+									break;
+								case "DELIVERED":
+									html += "<td>已送达</td>";
+									break;
+								case "SENT":
+									html += "<td>正在下发</td>";
+									break;
+								}
+								html += "<td>"
+										+ crtTimeFtt(data[i].expiresIn - 61000)
+										+ "</td>";
+								html += "</tr>";
+							}
+							$("#task").html(html);
+						}
+					} else {
+						console.log("请求任务列表失败: " + data.code + "--"
+								+ data.message)
+					}
+				},
+				fail : function(error) {
+					console.log("网络请求失败：" + error)
+				}
+			});
+
+		}
+
+		//创建时间格式化显示
+		function crtTimeFtt(value) {
+			var crtTime = new Date(value);
+			return dateFtt("yyyy-MM-dd hh:mm:ss", crtTime);
+		}
+
+		function dateFtt(fmt, date) { //author: meizz 
+			var o = {
+				"M+" : date.getMonth() + 1, //月份 
+				"d+" : date.getDate(), //日 
+				"h+" : date.getHours(), //小时 
+				"m+" : date.getMinutes(), //分 
+				"s+" : date.getSeconds(), //秒 
+				"q+" : Math.floor((date.getMonth() + 3) / 3), //季度 
+				"S" : date.getMilliseconds()
+			//毫秒
+			};
+			if (/(y+)/.test(fmt))
+				fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "")
+						.substr(4 - RegExp.$1.length));
+			for ( var k in o)
+				if (new RegExp("(" + k + ")").test(fmt))
+					fmt = fmt.replace(RegExp.$1,
+							(RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
+									.substr(("" + o[k]).length)));
+			return fmt;
+		}
+	</script>
+</body>
+
+</html>
