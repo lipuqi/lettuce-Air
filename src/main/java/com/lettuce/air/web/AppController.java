@@ -1,4 +1,4 @@
-package com.lettuce.air.iot.app.web;
+package com.lettuce.air.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
