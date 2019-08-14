@@ -4,8 +4,14 @@ import com.lettuce.air.common.exception.CustomException;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 上报灯状态
+ * @author Lando
+ *
+ */
 public class SwitchBulb_status extends DeviceData {
 
+	//上报状态
 	private Integer status;
 
 	public Integer getStatus() {

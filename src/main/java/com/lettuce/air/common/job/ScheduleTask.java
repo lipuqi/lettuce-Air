@@ -28,6 +28,9 @@ public class ScheduleTask {
 	@Autowired
 	private DeviceService deviceService;
 	
+	/**
+	 * 定时清理过期任务失败
+	 */
     @Scheduled(cron = "0 0/1 * * * ?") //1分钟执行一次
     private void cleanMapTasks() {
 		try {
@@ -36,7 +39,10 @@ public class ScheduleTask {
 			LOGGER.error("定时清理任务失败", e);
 		}
     }
-
+    
+    /**
+     * 定时校正灯状态
+     */
     @Scheduled(cron = "0 0/30 * * * ?") //30分钟执行一次
     private void queryStatusTasks() {
 		try {
@@ -46,11 +52,15 @@ public class ScheduleTask {
 		}
     }
     
+    /**
+     * 设备健康检测
+     */
     @Scheduled(cron = "0 0 0/1 * * ?") //1小时执行一次
     private void healthCheckTasks() {
 		try {
 			BasicDevice device = (OperationPi) mapCache.get(DeviceConstant.OperationPi);
 			if(device != null){
+				//如果当前时间减上一次更新时间大于1小时，那么就判定这个设备下线
 				if((System.currentTimeMillis() - device.getUpdateTime()) > 60 * 60 * 1000){
 					device.setStatus(0);
 					device.setUpdateTime();

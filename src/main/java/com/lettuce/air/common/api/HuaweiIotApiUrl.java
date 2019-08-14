@@ -38,7 +38,13 @@ public class HuaweiIotApiUrl {
 	public void setDeviceCommandsUrl(String deviceCommandsUrl) {
 		this.deviceCommandsUrl = deviceCommandsUrl;
 	}
-
+	
+	/**
+	 * 获取Token
+	 * @param huaweiIotProperties
+	 * @return
+	 * @throws Exception
+	 */
 	public String getToken(HuaweiIotProperties huaweiIotProperties) throws Exception {
 		HttpsUtil httpsUtil = new HttpsUtil();
 		httpsUtil.initSSLConfigForTwoWay();
@@ -51,6 +57,13 @@ public class HuaweiIotApiUrl {
         return responseLogin.getContent();
 	}
 	
+	/**
+	 * 使用刷新Token标识获取Token
+	 * @param huaweiIotProperties
+	 * @param refreshToken
+	 * @return
+	 * @throws Exception
+	 */
 	public String getToken(HuaweiIotProperties huaweiIotProperties, String refreshToken) throws Exception {
 		HttpsUtil httpsUtil = new HttpsUtil();
 		httpsUtil.initSSLConfigForTwoWay();
@@ -58,12 +71,20 @@ public class HuaweiIotApiUrl {
 		Map<String, String> paramRefresh = new HashMap<>();
 		paramRefresh.put("appId", huaweiIotProperties.getAppID());
 		paramRefresh.put("secret", huaweiIotProperties.getAppSecret());
-		paramRefresh.put("refreshToken", refreshToken);
+		paramRefresh.put("refreshToken", refreshToken);//刷新token标识
 
         StreamClosedHttpResponse responseLogin = httpsUtil.doPostFormUrlEncodedGetStatusLine(refreshTokenUrl, paramRefresh);
         return responseLogin.getContent();
 	}
-
+	
+	/**
+	 * 执行命令
+	 * @param appID
+	 * @param token
+	 * @param paramCreateDeviceCommand
+	 * @return
+	 * @throws Exception
+	 */
 	public String getDeviceCommandsUrl(String appID, String token, JSONObject paramCreateDeviceCommand) throws Exception {
         HttpsUtil httpsUtil = new HttpsUtil();
         httpsUtil.initSSLConfigForTwoWay();

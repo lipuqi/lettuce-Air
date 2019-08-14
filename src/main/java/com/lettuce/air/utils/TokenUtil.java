@@ -40,9 +40,11 @@ public class TokenUtil {
 		String appId = huaweiIotProperties.getAppID();
 		AccessToken token = tokenService.findToken(appId);
 		try {
+			//如果缓存没有凭证就调用获取凭证
 			if (token == null) {
 				token = AccessToken.packaging(appId, huaweiIotApiUrl.getToken(huaweiIotProperties));
 				tokenService.saveToken(token);
+			//如果缓存里的凭证过期，那就调用刷新凭证
 			} else if (System.currentTimeMillis() >= token.getExpiresIn()) {
 				token = AccessToken.packaging(appId,
 						huaweiIotApiUrl.getToken(huaweiIotProperties, token.getRefreshToken()));

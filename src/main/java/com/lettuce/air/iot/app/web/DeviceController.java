@@ -14,6 +14,11 @@ import com.lettuce.air.service.device.DeviceService;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 设备端对接接口
+ * @author Lando
+ *
+ */
 @RestController
 @RequestMapping("/device")
 public class DeviceController {
@@ -21,6 +26,11 @@ public class DeviceController {
 	@Autowired
 	private DeviceService deviceService;
 	
+	/**
+	 * 上报数据
+	 * @param result
+	 * @return
+	 */
 	@PostMapping(value = "/deviceDataChanged", produces = { "application/json;charset=UTF-8" })
 	public GenericResponse deviceDataChanged(@RequestBody JSONObject result){
 		try {
@@ -33,6 +43,11 @@ public class DeviceController {
 		return ResponseFormat.retParam(200, "OK");
 	}
 	
+	/**
+	 * 返回命令下发状态
+	 * @param result
+	 * @return
+	 */
 	@PostMapping(value = "/commandStatus", produces = { "application/json;charset=UTF-8" })
 	public GenericResponse commandStatus(@RequestBody JSONObject result){
 		try {

@@ -8,14 +8,19 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix="huaweiIot.config")
 public class HuaweiIotProperties {
 	
+	//appId
 	private String appID;
 	
+	//app密钥
 	private String appSecret;
 	
+	//设备唯一标识符
 	private String deviceId;
 	
+	//命令过期时间
 	private Long commandExecuteTime;
 	
+	//命令下发回调地址
 	private String commandCallbackUrl;
 	
 	public String getAppID() {

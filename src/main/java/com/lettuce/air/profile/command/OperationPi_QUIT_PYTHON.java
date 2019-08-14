@@ -6,10 +6,17 @@ import com.lettuce.air.profile.ServiceConstant;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 程序退出命令
+ * @author Lando
+ *
+ */
 public class OperationPi_QUIT_PYTHON extends DeviceCommand {
 
+	//命令下发参数
 	private Integer executeQuit;
 
+	//响应参数
 	private Integer result;
 	
 
@@ -34,6 +41,7 @@ public class OperationPi_QUIT_PYTHON extends DeviceCommand {
 
 	public OperationPi_QUIT_PYTHON(Integer executeQuit) {
 		super(ServiceConstant.OperationPi, ServiceConstant.OperationPi, ServiceConstant.QUIT_PYTHON);
+		//executeQuit参数只允许为1
 		if(executeQuit != 1){
 			throw new BasicException(10003, new CustomException(OperationPi_QUIT_PYTHON.class, "下发命令参数不正确"));
 		}

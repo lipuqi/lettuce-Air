@@ -51,17 +51,18 @@ public class DeviceServiceImpl implements DeviceService {
 		BasicDevice device = null;
 		if (result.containsKey("notifyType") && PushStatus.DEVICE_DATA_CHANGED.equals(result.getString("notifyType"))) {
 			JSONObject service = result.getJSONObject("service");
+			//判断是灯的服务还是设备的服务
 			switch (service.getString("serviceId")) {
 			case ServiceConstant.SwitchBulb:
 				SwitchBulb_status switchBulb_status = new SwitchBulb_status();
-				switchBulb_status.packaging(service);
+				switchBulb_status.packaging(service);//解析消息内容
 				device = new Bulb();
 				device.setStatus(switchBulb_status.getStatus());
 				device.setUpdateTime();
 				break;
 			case ServiceConstant.OperationPi:
 				OperationPi_status sperationPi_status = new OperationPi_status();
-				sperationPi_status.packaging(service);
+				sperationPi_status.packaging(service);//解析消息内容
 				device = new OperationPi();
 				device.setStatus(sperationPi_status.getStatus());
 				device.setUpdateTime();
@@ -78,6 +79,7 @@ public class DeviceServiceImpl implements DeviceService {
 	public void getCommandStatus(JSONObject result) {
 		
 		if (result.containsKey("commandId")) {
+			//获取任务
 			CommandTask commandTask = (CommandTask) mapCache.get(result.getString("commandId"));
 			if (commandTask == null) {
 				throw new CustomException(DeviceServiceImpl.class, "获取命令状态时的命令标识不在序列中");
@@ -85,17 +87,26 @@ public class DeviceServiceImpl implements DeviceService {
 			JSONObject commandResult = result.getJSONObject("result");
 			String resultCode = commandResult.getString("resultCode");
 			commandTask.setStatus(resultCode);
+			
+			//如果任务状态为成功
 			if("SUCCESSFUL".equals(resultCode)){
+				//解析响应内容
 				getCommandRsp(commandTask.getMethod(), commandResult.getJSONObject("resultDetail").getInt("result"));
 			}
 			mapCache.put(commandTask.getCommandId(), commandTask);
 		}
 	}
 	
+	/**
+	 * 解析响应内容
+	 * @param method
+	 * @param value
+	 */
 	private void getCommandRsp(String method, Integer value) {
 		BasicDevice device = null;
 		
 		if (method != null && value != null) {
+			//判断命令，将响应后的内容更新相应设备状态
 			switch (method) {
 			case ServiceConstant.ON_OFF:
 				device = new Bulb();
@@ -132,6 +143,7 @@ public class DeviceServiceImpl implements DeviceService {
 		JSONObject commandData = new JSONObject();
 		JSONObject command = null;
 
+		//根据响应的命令，封装不同的内容
 		switch (method) {
 		case ServiceConstant.ON_OFF:
 			if(getBulbStatus() == value){
@@ -148,7 +160,8 @@ public class DeviceServiceImpl implements DeviceService {
 		default:
 			throw new BasicException(10001, new CustomException(DeviceServiceImpl.class, "下发命令类型没有匹配"));
 		}
-
+		
+		//封装命令下发基础参数
 		commandData.put("deviceId", huaweiIotProperties.getDeviceId());
 		commandData.put("command", command);
 		commandData.put("expireTime", 0);
@@ -158,7 +171,8 @@ public class DeviceServiceImpl implements DeviceService {
 		String result = huaweiIotApiUrl.getDeviceCommandsUrl(huaweiIotProperties.getAppID(), tokenUtil.getToken(),
 				commandData);
 		JSONObject resultJson = JSONObject.fromObject(result);
-
+		
+		//命令下发成功后，创建任务监听任务状态
 		CommandTask commandTask = new CommandTask();
 		commandTask.setCommandId(resultJson.getString("commandId"));
 		commandTask.setMethod(method);
@@ -188,6 +202,7 @@ public class DeviceServiceImpl implements DeviceService {
 
 	@Override
 	public void initDevice() {
+		//初始化设备都置为0的状态
 		BasicDevice device = new Bulb();
 		device.setStatus(0);
 		device.setUpdateTime();

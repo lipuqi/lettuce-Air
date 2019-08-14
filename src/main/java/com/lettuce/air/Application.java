@@ -23,6 +23,9 @@ public class Application implements ApplicationListener<ContextRefreshedEvent> {
 		SpringApplication.run(Application.class, args);
 	}
 
+	/**
+	 * 初始化参数
+	 */
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 		DeviceService deviceService = contextRefreshedEvent.getApplicationContext().getBean(DeviceService.class);

@@ -2,12 +2,20 @@ package com.lettuce.air.profile.command;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 命令基类
+ * @author Lando
+ *
+ */
 public abstract class DeviceCommand {
 	
+	//服务ID
 	private String serviceId;
 	
+	//服务类型
 	private String serviceType;
 	
+	//命令内容
 	private String method;
 	
 	public DeviceCommand() {
@@ -44,6 +52,10 @@ public abstract class DeviceCommand {
 		this.method = method;
 	}
 	
+	/**
+	 * 封装参数
+	 * @return
+	 */
 	public abstract JSONObject unpack();
 	
 }

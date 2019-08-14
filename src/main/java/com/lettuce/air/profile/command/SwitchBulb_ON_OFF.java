@@ -6,10 +6,17 @@ import com.lettuce.air.profile.ServiceConstant;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 开灯
+ * @author Lando
+ *
+ */
 public class SwitchBulb_ON_OFF extends DeviceCommand {
 
+	//命令下发参数
 	private Integer toggleBulb;
 
+	//响应参数
 	private Integer result;
 	
 	public SwitchBulb_ON_OFF() {
@@ -17,6 +24,7 @@ public class SwitchBulb_ON_OFF extends DeviceCommand {
 	
 	public SwitchBulb_ON_OFF(Integer toggleBulb) {
 		super(ServiceConstant.SwitchBulb, ServiceConstant.SwitchBulb, ServiceConstant.ON_OFF);
+		//toggleBulb参数只允许为0/1
 		if(toggleBulb != 0 && toggleBulb != 1){
 			throw new BasicException(10003, new CustomException(SwitchBulb_ON_OFF.class, "下发命令参数不正确"));
 		}

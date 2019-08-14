@@ -1,8 +1,13 @@
 package com.lettuce.air.pojo.basic;
 
+/**
+ * 存储基类
+ * @author Lando
+ *
+ */
 public class Cache {
 
-	// token时间戳
+	//过期时间戳
 	private Long expiresIn = null;
 	
 	public Long getExpiresIn() {

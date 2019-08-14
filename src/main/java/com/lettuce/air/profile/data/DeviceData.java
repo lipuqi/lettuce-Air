@@ -2,10 +2,17 @@ package com.lettuce.air.profile.data;
 
 import net.sf.json.JSONObject;
 
+/**
+ * 数据上报基类
+ * @author Lando
+ *
+ */
 public abstract class DeviceData {
 	
+	//服务ID
 	private String serviceId;
 	
+	//服务类型
 	private String serviceType;
 	
 	public String getServiceId() {
