@@ -54,9 +54,9 @@ public class HttpsUtil {
 
 	public String TRUSTCAPWD = "Huawei@123";
 	
-	//public String path = "/home/iot/cert/"; //linux端的证书目录
+	public String path = "/home/iot/cert/"; //linux端的证书目录
 	
-	public String path = "E:/lettuce/cert/"; //window端的证书目录
+	//public String path = "E:/lettuce/cert/"; //window端的证书目录
 
 	private static CloseableHttpClient httpClient;
 
